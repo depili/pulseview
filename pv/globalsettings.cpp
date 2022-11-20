@@ -324,13 +324,17 @@ void GlobalSettings::undo_tracked_changes()
 void GlobalSettings::store_gvariant(QSettings &settings, GVariant *v)
 {
 	const GVariantType *var_type = g_variant_get_type(v);
-	char *var_type_str = g_variant_type_dup_string(var_type);
 
+	char *var_type_str = g_variant_type_dup_string(var_type);
 	QByteArray var_data = QByteArray((const char*)g_variant_get_data(v),
 		g_variant_get_size(v));
 
 	settings.setValue("value", var_data);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	settings.setValue("type", (const char*)var_type_str);
+#else
 	settings.setValue("type", var_type_str);
+#endif
 
 	g_free(var_type_str);
 }

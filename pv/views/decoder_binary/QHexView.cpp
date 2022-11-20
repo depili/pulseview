@@ -496,8 +496,11 @@ void QHexView::paintEvent(QPaintEvent *event)
 				painter.setBackground(selected_brush);
 				painter.setPen(palette().color(QPalette::HighlightedText));
 			}
-
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+			painter.drawText(x, y, QString(QChar(ch)));
+#else
 			painter.drawText(x, y, QString(ch));
+#endif
 			x += charWidth_;
 		}
 
