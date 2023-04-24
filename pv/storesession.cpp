@@ -185,7 +185,17 @@ bool StoreSession::start()
 				any_segment->samplerate())}});
 		output_->receive(meta);
 
+#if GLIB_CHECK_VERSION(2, 76, 0)
+		// glibmm-2.76.0 doesn't have TimeVal anymore
 		Glib::DateTime start_time;
+
+#else
+		// Glibmm-2.66 doesn't compile with DateTime
+     	Glib::TimeVal start_time;
+       	start_time.tv_sec = 0;  // TODO Assumes saved data begins at t=0
+		start_time.tv_usec = 0;		auto header = context->create_header_packet(start_time);
+#endif
+
 		auto header = context->create_header_packet(start_time);
 		output_->receive(header);
 	} catch (Error& error) {
